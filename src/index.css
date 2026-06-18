@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', sans-serif;
+  background-color: #0A0E1A;
+  color: #F8FAFC;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  background: radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(16,185,129,0.14), transparent 20%),
+    #0A0E1A;
+}
+
+* {
+  transition: all 300ms ease;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(16px);
+}
+
+.skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  background-size: 200% 100%;
+}
+
+@keyframes pulse {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -200% 0; }
+}
+
+input::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+input, select, textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #F8FAFC;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(99,102,241,0.75);
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
