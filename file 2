@@ -1,0 +1,332 @@
+Q1.ICE Cream
+from itertools import combinations, combinations_with_replacement
+print("Ice Cream Flavor Combination Calculator")
+flavors = input("Enter ice cream flavors separated by commas (e.g., Vanilla, Chocolate, etc.): ").split(',')
+flavors = [f.strip() for f in flavors if f.strip()]
+n = len(flavors)
+try:
+    r = int(input(f"How many flavors do you want to choose (out of {n} available)?: "))
+except ValueError:
+    print("Invalid input")
+    exit()
+if not flavors or r <= 0 or r > n:
+    print("Invalid input")
+    exit()
+without_replacement = len(list(combinations(flavors, r)))
+with_replacement = len(list(combinations_with_replacement(flavors, r)))
+print("\nFlavor Combinations")
+print(f"Total combinations without replacement: {without_replacement}")
+print(f"Total combinations with replacement: {with_replacement}")
+
+END
+Q2.SKEW
+
+import pandas as pd
+import numpy as np
+import os
+import sys
+from scipy.stats import skew,kurtosis
+
+st=input().strip()
+path=os.path.join(sys.path[0],st)
+
+if not os.path.exists(path):
+    print(f"Error: File '{st}' not found in script directory!")
+    sys.exit(1)
+    
+if st.endswith('.csv'):
+    df=pd.read_csv(path)
+
+elif st.endswith('.xslx'):
+    df=pd.read_excel(path)
+    
+else:
+    print("Error: Unsopported file")
+    sys.exit(1)
+
+print(f"File loaded successfully: {st}")
+print(f"Data shape: {df.shape}")
+print("Preview of Loaded Data:")
+print(df.head())
+
+print("Simple Random Sampling (50 students):")
+if(len(df)<50):
+    print(f"Not enough rows to sample 50 rows. Total rows: {len(df)}")
+    sys.exit(1)
+else:
+    sdf=df.sample(n=50,random_state=42).reset_index(drop=True)
+    print(sdf.head())
+
+print("Summary Statistics of the Population data")
+print(df['Height_cm'].describe().round(1))
+print(f"median: {df['Height_cm'].median()} mode: {df['Height_cm'].mode()[0]}")
+print(f"skewness: {round(skew(df['Height_cm']),3)} kurtosis: {round(kurtosis(df['Height_cm']),3)}")
+
+print("Summary Statistics of the Sample data")
+print(sdf['Height_cm'].describe().round(1))
+print(f"median: {sdf['Height_cm'].median()} mode: {sdf['Height_cm'].mode()[0]}")
+print(f"skewness: {round(skew(sdf['Height_cm']),3)} kurtosis: {round(kurtosis(sdf['Height_cm']),3)}")
+
+
+
+
+END
+
+
+Q3.TT_TEST IND
+import numpy as np
+from scipy.stats import ttest_ind
+
+mm=float(input())
+stdm=float(input())
+nm=int(input())
+
+
+mf=float(input())
+stdf=float(input())
+nf=int(input())
+
+np.random.seed(42)
+mr=np.random.normal(mm,stdm,nm)
+fr=np.random.normal(mf,stdf,nf)
+
+tst,pv=ttest_ind(mr,fr,equal_var=True)
+
+print("Two-Sample T-Test Result (Male vs Female Fit Ratings)")
+print(f"T-statistic: {tst:.4f}")
+print(f"P-value: {pv:.4f}")
+
+al=0.05
+if pv < al:
+    print("Reject the null hypothesis: Significant difference in fit ratings between male and female respondents.")
+else:
+    print("Fail to reject the null hypothesis: No significant difference in fit ratings between male and female respondents.")
+        
+
+END
+
+Q4.CHI_2
+
+import os
+import sys
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+
+filename = input().strip()
+path = os.path.join(sys.path[0], filename)
+
+
+df = pd.read_csv(path)
+
+df["Page_Loads_Bin"] = pd.qcut(
+    df["Page.Loads"],
+    q=3,
+    labels=["Low", "Medium", "High"]
+)
+
+table = pd.crosstab(df["Day"], df["Page_Loads_Bin"])
+
+chi2, p, dof, expected = chi2_contingency(table)
+
+print("Null Hypothesis (H0): Page Loads are independent of Day of the Week.")
+print("Alternative Hypothesis (H1): Page Loads depend on Day of the Week.\n")
+
+print("Contingency Table (Page Loads vs Day of the Week):\n")
+print(table)
+
+print(f"\nChi-Square Statistic: {chi2:.2f}")
+print(f"p-value: {p:.4f}")
+
+if p < 0.05:
+    print("\nConclusion: Reject H0. Page Loads depend on the Day of the Week.")
+else:
+    print("\nConclusion: Fail to Reject H0. Page Loads are independent of the Day of the Week.")
+
+END
+
+Q5.DATA_CLEAN
+
+import pandas as pd
+import numpy as np
+import os,sys
+from sklearn.preprocessing import LabelEncoder
+
+filename = input("Enter the CSV file name (e.g., income_data.csv): ")
+
+df = pd.read_csv(os.path.join(sys.path[0],filename))
+
+print("Initial missing values per column:")
+print(df.isnull().sum())
+
+df.replace(' ?', np.nan, inplace=True)
+
+print("\nMissing values per column after replacing ' ?' with NaN:")
+print(df.isnull().sum())
+
+for col in df.columns:
+    if df[col].isnull().sum() > 0:
+        df[col].fillna(df[col].mode()[0], inplace=True)
+
+print("\nMissing values per column after filling with mode:")
+print(df.isnull().sum())
+
+
+categorical_columns = [
+    "WorkClass",
+    "Education",
+    "Occupation",
+    "Relationship",
+    "Gender",
+    "Native_Country",
+    "Income_Bracket"
+]
+
+for col in categorical_columns:
+    if col in df.columns:
+        df[col] = df[col].astype("category")
+    else:
+        print(f"\nWarning: Column '{col}' not found in dataset.")
+
+print("\nData types after conversion to categorical:")
+print(df.dtypes)
+
+encoder = LabelEncoder()
+
+for col in categorical_columns:
+    if col in df.columns and col != "Income_Bracket":
+        df[col + "_encode"] = encoder.fit_transform(df[col])
+
+print("\nFirst 5 rows of the processed dataframe:")
+print(df.head())
+
+END
+
+Q6.R2_SCORE
+
+import os
+import sys
+import pandas as pd
+import numpy as np
+import math
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
+from sklearn.linear_model import LinearRegression
+filename=input().strip()
+filepath=os.path.join(sys.path[0],filename)
+df=pd.read_csv(filepath)
+df=df[['Customer_Age','Order_Quantity','Unit_Cost','Unit_Price','Revenue']]
+df=df.fillna(df.mean(numeric_only=True))
+for col in df.columns:
+    q1=df[col].quantile(0.25)
+    q3=df[col].quantile(0.75)
+    iqr=q3-q1
+    lb=q1-1.5*iqr
+    ub=q3+1.5*iqr
+    df[col]=df[col].clip(lower=lb,upper=ub)
+s=StandardScaler()
+sd=s.fit_transform(df)
+sdf=pd.DataFrame(sd,columns=df.columns)
+x=np.array(sdf['Unit_Cost']).reshape(-1,1)
+y=sdf['Revenue']
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=200)
+model=LinearRegression()
+model.fit(x_train,y_train)
+y=model.predict(x_test)
+mse=mean_squared_error(y_test,y)
+print("Mean Squared Error (MSE):",format(mse,'.4f'))
+mae=mean_absolute_error(y_test,y)
+print("Mean Absolute Error (MAE):",format(mae,'.4f'))
+m=math.sqrt(mse)
+print("Root Mean Squared Error (RMSE):",format(m,'.4f'))
+r2=r2_score(y_test,y)
+print("R2 Score:",format(r2,'.4f'))
+
+END
+
+Q7.
+import os
+import sys
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+filename=input().strip()
+filepath=os.path.join(sys.path[0],filename)
+df=pd.read_csv(filepath)
+print("First 5 Rows:")
+print(df.head())
+print("Dataset Info:")
+print(df.info())
+print()
+for col in df.columns:
+    q1=df[col].quantile(0.25)
+    q3=df[col].quantile(0.75)
+    iqr=q3-q1
+    lb=q1-1.5*iqr
+    ub=q3+1.5*iqr
+    df[col]=np.where(df[col]<lb,lb,df[col])
+    df[col]=np.where(df[col]>ub,ub,df[col])
+print("Missing Values:")
+print(df.isnull().sum())
+print()
+print("Outlier treatment (IQR Winsorization) done.")
+print()
+print("First 5 Rows After Scaling:")
+scaler=StandardScaler()
+sc=scaler.fit_transform(df)
+scdf=pd.DataFrame(sc,columns=df.columns)
+print(scdf.head())
+print()
+corr=df.corr().abs()
+print("Correlation matrix (absolute values >= 0.7):")
+print(corr>=0.7)
+print()
+print("Features sorted by absolute correlation with 'PremiumPrice':")
+print(corr[["PremiumPrice"]].sort_values(by="PremiumPrice",ascending=True))
+    
+
+END
+
+Q8.
+import os
+import sys
+import pandas as pd
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
+
+file_name = input("").strip()
+file_path = os.path.join(sys.path[0], file_name)
+
+try:
+    df = pd.read_csv(file_path)
+except Exception as e:
+    print(f"Error loading file: {e}")
+    sys.exit()
+
+salary_encoder = preprocessing.LabelEncoder()
+df['salary_enc'] = salary_encoder.fit_transform(df['salary'])
+print("Salary classes:", salary_encoder.classes_)
+
+# Encoding 'Department'
+department_encoder = preprocessing.LabelEncoder()
+df['Department_enc'] = department_encoder.fit_transform(df['Department'])
+print("Department classes:", department_encoder.classes_)
+
+df.info()
+
+print("\nMissing values per column:")
+print(df.isnull().sum())
+
+df = df.drop(['salary', 'Department'], axis=1)
+
+X = df.drop('left', axis=1)  # Independent features
+y = df['left']               # Dependent feature
+
+scaler = StandardScaler()
+X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+corr_matrix = X_scaled.corr().abs()
+high_corr = corr_matrix >= 0.7
+print("\nHighly correlated features (cutoff >= 0.7):")
+print(high_corr)
