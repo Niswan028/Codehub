@@ -1,0 +1,42 @@
+# nested_indent_plot.py
+
+import matplotlib.pyplot as plt
+
+# Values
+x = [1, 2, 3, 4, 5]
+y = [5, 10, 15, 20, 25]
+
+number = 15
+
+# Multiple levels of indentation
+if number > 0:
+    print("Number is positive")
+
+    if number > 10:
+        print("Number is greater than 10")
+
+        if number < 20:
+            print("Number is between 10 and 20")
+
+            if number == 15:
+                print("Number is exactly 15")
+
+                # Plot inside the deepest if block
+                plt.plot(x, y, marker="o")
+                plt.title("Nested If Indentation Plot")
+                plt.xlabel("X")
+                plt.ylabel("Y")
+                plt.grid(True)
+                plt.show()
+
+            else:
+                print("Number is not 15")
+
+        else:
+            print("Number is 20 or more")
+
+    else:
+        print("Number is 10 or less")
+
+else:
+    print("Number is negative")
